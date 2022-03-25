@@ -5,13 +5,10 @@ import 'package:camera/camera.dart';
 import 'camera.dart';
 
 List<CameraDescription> cameras;
-List<Landmark> landmark; //랜드마크
-
-class Landmark {
-  String name;
-  double latitude; //위도
-  double longitude; //경도
-}
+List<Map> landmark = [
+  {'name': '북문', 'latitude': 1, 'longitude': 1},
+  {'name': '정문', 'latitude': 1, 'longitude': 1},
+];
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +41,7 @@ class home extends StatelessWidget {
         onPressed: () {
           //gps 받기
 
-          //화면 전환
+          //화면 전환 (위도 경도 값 등등 같이 넘겨주기)
         },
       ),
     );

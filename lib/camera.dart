@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'package:camera/camera.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import 'landmark.dart';
 import 'main.dart';
 
-
 class Camera extends StatefulWidget {
-  Camera({Key key, this.title}) : super(key: key);
-  final String title;
   @override
+  const Camera({key}) : super(key: key);
   _CameraState createState() => _CameraState();
 }
 
@@ -16,19 +17,24 @@ class _CameraState extends State<Camera> {
   double mylatitude; //위도
   double mylongitude; //경도
   List _recognitions; //탐지한 객체들 정보를 담은 리스트
+  Map target; //사용자 위치에서 탐지해야하는 타겟 랜드마크
   double _imageHeight;
   double _imageWidth;
   CameraImage img;
   CameraController controller;
   bool isBusy = false;
-  String result = "";
 
   @override
   void initState() {
-    
     super.initState();
+    initGps();
     loadModel();
     initCamera();
+  }
+
+  //gps 값 받아오기 구현해야함
+  void initGps() {
+    target = landmark[0]; //임시로 북문 타겟 해놓은거임
   }
 
   //모델 불러오기
@@ -98,10 +104,16 @@ class _CameraState extends State<Camera> {
     if (_recognitions == null) return [];
     if (_imageHeight == null || _imageWidth == null) return [];
 
-
+    //여기에 탐지됐을때 인증보내는 기능 만들어 넣음 됨
     _recognitions.forEach((re) {
-      //여기에 탐지됐을때 인증보내는 함수 만들어 넣음 됨
       print(re["detectedClass"]);
+      print(re["confidenceInClass"]);
+
+      //모델 우리껄로 바꾸면 조건문 이거로 바꿔야함
+      //if (re["detectedClass"] == target['name'] && re['confidenceInClass'] >= (0.3))
+      if (re['confidenceInClass'] >= (0.3)) {
+        Fluttertoast.showToast(msg: "인증되었습니다");
+      }
     });
 
     double factorX = screen.width;

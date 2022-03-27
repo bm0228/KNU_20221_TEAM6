@@ -13,7 +13,6 @@ List<Map> landmark = [
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
-  //랜드마크 초기화 함수()
   runApp(MyApp());
 }
 
@@ -40,8 +39,9 @@ class home extends StatelessWidget {
         child: Text("영래"),
         onPressed: () {
           //gps 받기
-
+          
           //화면 전환 (위도 경도 값 등등 같이 넘겨주기)
+          Navigator.push(context, MaterialPageRoute(builder: (context) => Camera()),);
         },
       ),
     );
@@ -49,5 +49,3 @@ class home extends StatelessWidget {
 }
 
 
-
-//landmark 초기화 함수

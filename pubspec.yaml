@@ -59,6 +59,8 @@ flutter:
     - assets/tiny-yolo-fyp.tflite
     - assets/yolov2_tiny.txt
     - assets/yolov2_tiny.tflite
+    - assets/converted_model.tflite
+    - assets/converted_model.txt
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

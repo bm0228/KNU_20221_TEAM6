@@ -42,8 +42,8 @@ class _CameraState extends State<Camera> {
     Tflite.close();
     try {
       String res = await Tflite.loadModel(
-        model: "assets/yolov2_tiny.tflite",
-        labels: "assets/yolov2_tiny.txt",
+        model: "converted_model.tflite",
+        labels: "converted_model.txt",
         // useGpuDelegate: true,
       );
       print(res);
@@ -90,6 +90,9 @@ class _CameraState extends State<Camera> {
       img;
     });
   }
+
+
+  
 
   //카메라 껐을때
   @override

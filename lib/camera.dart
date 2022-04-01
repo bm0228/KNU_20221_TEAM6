@@ -173,7 +173,9 @@
 //                   aspectRatio: controller.value.aspectRatio,
 //                   child: CameraPreview(controller),
 //                 ),
-//         )));
+//         )
+//         )
+//         );
 
 //     //TODO rectangle round detected objects
 //     if (img != null) {

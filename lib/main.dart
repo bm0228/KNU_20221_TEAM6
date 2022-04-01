@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:camera/camera.dart';
-// import 'home.dart';
+import 'home.dart';
 
 // List<CameraDescription> cameras;
 
@@ -35,8 +35,10 @@ Future<void> main() async {
   cameras = await availableCameras();
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: MyHomePage(
-      cameras,
-    ),
+    // home: MyHomePage(
+    //   cameras,
+    // ),
+    home: home(),
   ));
 }
+

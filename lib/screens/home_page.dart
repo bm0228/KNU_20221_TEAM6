@@ -26,11 +26,11 @@ class _MyHomePageState extends State<MyHomePage> {
     String res;
     res = await Tflite.loadModel(
         model: "assets/dol.tflite", labels: "assets/dol.txt");
-    print(res);
+    print("res : " + res);
   }
 
   setRecognitions(outputs) {
-    print(outputs);
+    print("outputs : " + outputs.toString());
 
     if (outputs[0]['index'] == 0) {
       index = 0;
@@ -43,6 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       predOne = outputs[0]['label'];
     });
+
+    //알림서비스 만들곳
   }
 
   @override
@@ -52,13 +54,14 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          "TensorFlow Lite App",
+          "랜드마크를 찾으세요",
         ),
         backgroundColor: Colors.blueAccent,
       ),
       body: Stack(
         children: [
           Camera(widget.cameras, setRecognitions),
+          //밑에 통째로 날려버릴 예정
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(

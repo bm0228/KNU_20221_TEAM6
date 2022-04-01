@@ -55,16 +55,7 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
   assets:
-    - assets/labelsfyp.txt
-    - assets/tiny-yolo-fyp.tflite
-    - assets/yolov2_tiny.txt
-    - assets/yolov2_tiny.tflite
-    - assets/converted_model.tflite
-    - assets/converted_model.txt
-    - assets/model.tflite
-    - assets/model.txt
-    - assets/dol.tflite
-    - assets/dol.txt
+    - assets/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -55,19 +55,34 @@ class _CameraState extends State<Camera> {
     super.dispose();
   }
 
+
   @override
   Widget build(BuildContext context) {
-    if (!cameraController.value.isInitialized) {
-      return Container();
-    }
+    Size size = MediaQuery.of(context).size;
+    List<Widget> stackChildren = [];
+    stackChildren.add(Positioned(
+        top: 0.0,
+        left: 0.0,
+        width: size.width,
+        height: size.height-100,
+        child:  Container(
+          height: size.height-100,
+          child:(!cameraController.value.isInitialized) ? new Container(): AspectRatio(
+            aspectRatio: cameraController.value.aspectRatio,
+            child: CameraPreview(cameraController),
+          ),
+        )
+    ));
 
-    return Transform.scale(
-      scale: 1 / cameraController.value.aspectRatio,
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: cameraController.value.aspectRatio,
-          child: CameraPreview(cameraController),
-        ),
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Container(
+            color: Colors.black,
+            child: Stack(
+              children: stackChildren,
+            )),
       ),
     );
   }

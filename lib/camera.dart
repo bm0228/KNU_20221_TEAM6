@@ -91,9 +91,6 @@ class _CameraState extends State<Camera> {
     });
   }
 
-
-  
-
   //카메라 껐을때
   @override
   void dispose() {

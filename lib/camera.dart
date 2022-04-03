@@ -42,8 +42,8 @@ class _CameraState extends State<Camera> {
     Tflite.close();
     try {
       String res = await Tflite.loadModel(
-        model: "converted_model.tflite",
-        labels: "converted_model.txt",
+        model: "assets/converted_model.tflite",
+        labels: "assets/converted_model.txt",
         // useGpuDelegate: true,
       );
       print(res);

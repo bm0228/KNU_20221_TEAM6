@@ -34,6 +34,10 @@ class _CameraState extends State<Camera> {
 
   //gps 값 받아오기 구현해야함
   void initGps() {
+    //위도 경도 얻어와서 타겟 정해주기
+    //mylatitude = ###;
+    //mylongitude = ###;
+    //if 위도 경도가 머시기머시기면
     target = landmark[0]; //임시로 북문 타겟 해놓은거임
   }
 

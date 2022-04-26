@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'package:camera/camera.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'landmark.dart';
 import 'main.dart';
@@ -14,8 +15,8 @@ class Camera extends StatefulWidget {
 }
 
 class _CameraState extends State<Camera> {
-  double mylatitude; //위도
-  double mylongitude; //경도
+  double _mylatitude; //위도
+  double _mylongitude; //경도
   List _recognitions; //탐지한 객체들 정보를 담은 리스트
   Map target; //사용자 위치에서 탐지해야하는 타겟 랜드마크
   double _imageHeight;
@@ -27,6 +28,7 @@ class _CameraState extends State<Camera> {
   @override
   void initState() {
     super.initState();
+    getCurrentLocation();
     initGps();
     loadModel();
     initCamera();
@@ -203,4 +205,14 @@ class _CameraState extends State<Camera> {
       ),
     );
   }
+}
+
+Future<void> getCurrentLocation() async {
+  LocationPermission permission = await Geolocator.requestPermission();
+  var currentPosition = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+  print("latitude" +
+      currentPosition.latitude.toString() +
+      "longtitude" +
+      currentPosition.longitude.toString());
 }

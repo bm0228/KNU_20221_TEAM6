@@ -16,12 +16,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '인증',
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: Colors.blue
-      ),
+      theme: ThemeData(brightness: Brightness.light, primaryColor: Colors.blue),
       home: home(),
     );
   }
 }
-

@@ -19,8 +19,8 @@ class Camera extends StatefulWidget {
 }
 
 class _CameraState extends State<Camera> {
-  List _recognitions; //탐지한 객체들 정보를 담은 리스트
-  var target; //사용자 위치에서 탐지해야하는 타겟 랜드마크, landmark list의 index(int값)
+  List _recognitions; //탐지한 객체들 정보를 담은 리스트\
+  var target;
   double _imageHeight;
   double _imageWidth;
   CameraImage img;
@@ -30,25 +30,54 @@ class _CameraState extends State<Camera> {
   @override
   void initState() {
     super.initState();
-    initGps();
+    getCurrentLocation();
     print("loadmodel~~" + target.toString());
     loadModel();
     initCamera();
   }
 
-  //gps에 맞는 landmark index를 return 받음
-  void initGps() async {
-    int idx = await getCurrentLocation();
-    setState(() {
-      target = idx;
-    });
+  // gps 값을 이용해 landmark list를 순차탐색, 거리 100m 이내의 landmark를 찾으면 해당 index를 return
+  Future<void> getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.requestPermission();
+    var currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print("latitude" +
+        currentPosition.latitude.toString() +
+        "longitude" +
+        currentPosition.longitude.toString());
+    var lat1 = currentPosition.latitude * math.pi / 180;
+    //35.885790 * math.pi / 180;
+    var lon1 = currentPosition.longitude * math.pi / 180;
+    //128.614078 * math.pi / 180;
+    double lat2, lon2, dist;
 
-    print("target is " + target.toString());
-    // exception
-    if (idx == -1) {
-      print("target is -1");
-      Fluttertoast.showToast(msg: "근처에 인증할 수단이 없습니다.\n다시 시도해 주세요");
+    for (int i = 0; i < landmark.length; i++) {
+      print("compare in for loop" + i.toString());
+      print("landmark" +
+          i.toString() +
+          " lati : " +
+          landmark[i]['latitude'].toString() +
+          " long : " +
+          landmark[i]['longitude'].toString());
+      lat2 = landmark[i]['latitude'] * math.pi / 180;
+      lon2 = landmark[i]['longitude'] * math.pi / 180;
+      dist = math.sin(lat1) * math.sin(lat2) +
+          math.cos(lat1) * math.cos(lat2) * math.cos(lon1 - lon2);
+      dist = math.acos(dist);
+      dist = dist * 180 / math.pi;
+      dist = dist * 60 * 1.1515;
+      dist *= 1609.344;
+      print("distance : " + dist.toString());
+      // 반경 100m
+      if (dist < 100) {
+        print("target is landmark " + i.toString());
+        target = i;
+      }
     }
+
+    print("target is -1");
+    target = -1; // -1 써야함
+    Fluttertoast.showToast(msg: "근처에 타깃이 없습니다.");
   }
 
   //모델 불러오기
@@ -117,7 +146,6 @@ class _CameraState extends State<Camera> {
   List<Widget> renderBoxes(Size screen) {
     if (_recognitions == null) return [];
     if (_imageHeight == null || _imageWidth == null) return [];
-    //print("Boxes_target is " + target.toString());
     //여기에 탐지됐을때 인증보내는 기능 만들어 넣음 됨
     _recognitions.forEach((re) {
       print(re["detectedClass"]);
@@ -217,48 +245,4 @@ class _CameraState extends State<Camera> {
       ),
     );
   }
-}
-
-// gps 값을 이용해 landmark list를 순차탐색, 거리 100m 이내의 landmark를 찾으면 해당 index를 return
-Future<int> getCurrentLocation() async {
-  LocationPermission permission = await Geolocator.requestPermission();
-  var currentPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high);
-  print("latitude" +
-      currentPosition.latitude.toString() +
-      "longitude" +
-      currentPosition.longitude.toString());
-  var lat1 = currentPosition.latitude * math.pi / 180;
-  //35.885790 * math.pi / 180;
-  var lon1 = currentPosition.longitude * math.pi / 180;
-  //128.614078 * math.pi / 180;
-  double lat2, lon2, dist;
-
-  for (int i = 0; i < landmark.length; i++) {
-    print("compare in for loop" + i.toString());
-    print("landmark" +
-        i.toString() +
-        " lati : " +
-        landmark[i]['latitude'].toString() +
-        " long : " +
-        landmark[i]['longitude'].toString());
-    lat2 = landmark[i]['latitude'] * math.pi / 180;
-    lon2 = landmark[i]['longitude'] * math.pi / 180;
-    dist = math.sin(lat1) * math.sin(lat2) +
-        math.cos(lat1) * math.cos(lat2) * math.cos(lon1 - lon2);
-    dist = math.acos(dist);
-    dist = dist * 180 / math.pi;
-    dist = dist * 60 * 1.1515;
-    dist *= 1609.344;
-    print("distance : " + dist.toString());
-    // 반경 100m
-    if (dist < 100) {
-      print("return landmark" + i.toString());
-      return i;
-    }
-  }
-
-  print("return -1");
-  // return 1;
-  return -1; // -1 써야함
 }

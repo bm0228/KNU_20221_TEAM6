@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meta/meta_meta.dart';
 import 'package:tflite/tflite.dart';
 import 'package:camera/camera.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,10 +19,8 @@ class Camera extends StatefulWidget {
 }
 
 class _CameraState extends State<Camera> {
-  //double _mylatitude; //위도
-  //double _mylongitude; //경도
   List _recognitions; //탐지한 객체들 정보를 담은 리스트
-  var target; //사용자 위치에서 탐지해야하는 타겟 랜드마크, landmark list의 index
+  var target; //사용자 위치에서 탐지해야하는 타겟 랜드마크, landmark list의 index(int값)
   double _imageHeight;
   double _imageWidth;
   CameraImage img;
@@ -30,34 +31,24 @@ class _CameraState extends State<Camera> {
   void initState() {
     super.initState();
     initGps();
-    //print("loadmodel~~" + target.toString());
+    print("loadmodel~~" + target.toString());
     loadModel();
     initCamera();
   }
 
-  // gps정보를 쓰기 위해 동기적으로 불러오기 위한 함수
-  void initGps() {
-    initGps_f();
-  }
-
   //gps에 맞는 landmark index를 return 받음
-  Future initGps_f() async {
-    //위도 경도 얻어와서 타겟 정해주기
-    //mylatitude = ###;
-    //mylongitude = ###;
-    //if 위도 경도가 머시기머시기면
+  void initGps() async {
     int idx = await getCurrentLocation();
     setState(() {
       target = idx;
     });
 
-    //print("target is " + target.toString());
-
+    print("target is " + target.toString());
     // exception
-    if (target == -1) {
+    if (idx == -1) {
       print("target is -1");
+      Fluttertoast.showToast(msg: "근처에 인증할 수단이 없습니다.\n다시 시도해 주세요");
     }
-    //target = landmark[0]; //임시로 북문 타겟 해놓은거임
   }
 
   //모델 불러오기
@@ -131,7 +122,9 @@ class _CameraState extends State<Camera> {
     _recognitions.forEach((re) {
       print(re["detectedClass"]);
       print(re["confidenceInClass"]);
-      //print("Boxes_target is " + target.toString());
+      print("Boxes_target is " +
+          target.toString() +
+          landmark[target]['name'].toString());
 
       //모델 우리껄로 바꾸면 조건문 이거로 바꿔야함
       //if (re['confidenceInClass'] >= (0.3))
@@ -231,39 +224,41 @@ Future<int> getCurrentLocation() async {
   LocationPermission permission = await Geolocator.requestPermission();
   var currentPosition = await Geolocator.getCurrentPosition(
       desiredAccuracy: LocationAccuracy.high);
-  /*print("latitude" +
+  print("latitude" +
       currentPosition.latitude.toString() +
       "longitude" +
-      currentPosition.longitude.toString());*/
+      currentPosition.longitude.toString());
   var lat1 = currentPosition.latitude * math.pi / 180;
   //35.885790 * math.pi / 180;
   var lon1 = currentPosition.longitude * math.pi / 180;
   //128.614078 * math.pi / 180;
+  double lat2, lon2, dist;
 
   for (int i = 0; i < landmark.length; i++) {
-    //print("compare in for loop" + i.toString());
-    /*print("landmark" +
+    print("compare in for loop" + i.toString());
+    print("landmark" +
         i.toString() +
         " lati : " +
         landmark[i]['latitude'].toString() +
         " long : " +
-        landmark[i]['longitude'].toString());*/
-    double lat2 = landmark[i]['latitude'] * math.pi / 180;
-    double lon2 = landmark[i]['longitude'] * math.pi / 180;
-    double dist = math.sin(lat1) * math.sin(lat2) +
+        landmark[i]['longitude'].toString());
+    lat2 = landmark[i]['latitude'] * math.pi / 180;
+    lon2 = landmark[i]['longitude'] * math.pi / 180;
+    dist = math.sin(lat1) * math.sin(lat2) +
         math.cos(lat1) * math.cos(lat2) * math.cos(lon1 - lon2);
     dist = math.acos(dist);
     dist = dist * 180 / math.pi;
     dist = dist * 60 * 1.1515;
     dist *= 1609.344;
-    //print("distance : " + dist.toString());
+    print("distance : " + dist.toString());
+    // 반경 100m
     if (dist < 100) {
-      //print("return landmark" + i.toString());
+      print("return landmark" + i.toString());
       return i;
     }
   }
 
-  //print("return null");
-  //return 1;
-  return -1;
+  print("return -1");
+  // return 1;
+  return -1; // -1 써야함
 }

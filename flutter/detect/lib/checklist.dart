@@ -31,13 +31,14 @@ class _ChecklistState extends State<Checklist> {
                     ),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 1,
                   ),
                   Text(title,
                       style: const TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.bold,
                       )),
+                  SizedBox(height: 10.0),
                   Padding(
                     padding: const EdgeInsets.all(8),
                     child: Text(
@@ -49,6 +50,7 @@ class _ChecklistState extends State<Checklist> {
                       textAlign: TextAlign.center,
                     ),
                   ),
+                  SizedBox(height: 10.0),
                   ElevatedButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
@@ -71,7 +73,6 @@ class _ChecklistState extends State<Checklist> {
             appBar: AppBar(
               title: Text("체크리스트"),
               backgroundColor: Colors.red[700],
-              centerTitle: true,
             ),
             body: ListView.builder(
                 itemCount: landmark.length,

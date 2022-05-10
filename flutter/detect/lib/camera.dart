@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:tflite/tflite.dart';
 import 'package:camera/camera.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import 'dart:io';
 import 'landmark.dart';
 import 'main.dart';
+import 'util.dart';
 
 class Camera extends StatefulWidget {
   @override
@@ -23,6 +24,7 @@ class _CameraState extends State<Camera> {
   CameraImage img;
   CameraController controller;
   bool isBusy = false;
+  bool certification = false; //인증 여부
 
   @override
   void initState() {
@@ -46,8 +48,8 @@ class _CameraState extends State<Camera> {
     Tflite.close();
     try {
       String res = await Tflite.loadModel(
-        model: "assets/converted_model.tflite",
-        labels: "assets/converted_model.txt",
+        model: "assets/yolov2_tiny.tflite",
+        labels: "assets/yolov2_tiny.txt",
         // useGpuDelegate: true,
       );
       print(res);
@@ -76,31 +78,42 @@ class _CameraState extends State<Camera> {
   runModelOnFrame() async {
     _imageWidth = img.width + 0.0;
     _imageHeight = img.height + 0.0;
-    _recognitions = await Tflite.detectObjectOnFrame(
-      bytesList: img.planes.map((plane) {
-        return plane.bytes;
-      }).toList(),
-      model: "YOLO",
-      imageHeight: img.height,
-      imageWidth: img.width,
-      imageMean: 127.5, //127.5  // 0
-      imageStd: 127.5, //127.5  //255.0
-      numResultsPerClass: 1,
-      threshold: 0.4,
-    );
+    try {
+      _recognitions = await Tflite.detectObjectOnFrame(
+        bytesList: img.planes.map((plane) {
+          return plane.bytes;
+        }).toList(),
+        model: "YOLO",
+        imageHeight: img.height,
+        imageWidth: img.width,
+        imageMean: 127.5, //127.5  // 0
+        imageStd: 127.5, //127.5  //255.0
+        numResultsPerClass: 1,
+        threshold: 0.4,
+      );
+    } catch (e) {
+      print("레코니션에러 = " + e);
+    }
+
     print(_recognitions.length);
     isBusy = false;
-    setState(() {
-      img;
-    });
+    if (mounted) {
+      setState(() {
+        img;
+      });
+    }
   }
 
   //카메라 껐을때
   @override
   void dispose() {
-    super.dispose();
-    controller.stopImageStream();
-    Tflite.close();
+    try {
+      super.dispose();
+      controller.stopImageStream();
+      Tflite.close();
+    } catch (e) {
+      print("dispose에러 : " + e);
+    }
   }
 
   //바운딩 박스 생성
@@ -117,6 +130,10 @@ class _CameraState extends State<Camera> {
       //if (re["detectedClass"] == target['name'] && re['confidenceInClass'] >= (0.3))
       if (re['confidenceInClass'] >= (0.3)) {
         Fluttertoast.showToast(msg: "인증되었습니다");
+        //controller.pausePreview(); //카메라 중지
+        setState(() {
+          certification = true;
+        });
       }
     });
 
@@ -172,9 +189,28 @@ class _CameraState extends State<Camera> {
 
     //TODO rectangle round detected objects
     if (img != null) {
-      stackChildren.addAll(renderBoxes(size));
+      try {
+        stackChildren.addAll(renderBoxes(size));
+      } catch (e) {
+        print(e);
+      }
     }
 
+    // stackChildren.add(
+    //   Container(
+    //     height: size.height,
+    //     alignment: Alignment.bottomCenter,
+    //     child: Container(
+    //       color: Colors.white,
+    //       child: Row(
+    //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //         children: [
+    //           Text('YOLO'),
+    //         ],
+    //       ),
+    //     ),
+    //   ),
+    // );
     stackChildren.add(
       Container(
         height: size.height,
@@ -184,23 +220,52 @@ class _CameraState extends State<Camera> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text('YOLO'),
+              // TextButton(
+              //     child: Text("뒤로가기"),
+              //     onPressed: () {
+              //       controller.pausePreview();
+              //       FlutterDialog(context,"인증을 취소합니다.");
+              //     }),
+              TextButton(
+                  style: TextButton.styleFrom(
+                    primary: (certification==true ? Colors.black: Colors.white),
+                    textStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      )
+                    ),
+                  child: Text("인증완료"),
+                  onPressed: () {
+                    if (certification == true) {
+                      controller.pausePreview();
+                      FlutterDialog(context,"인증되었습니다.");
+                    }
+                    // else{
+                    //   Fluttertoast.showToast(msg: "아직 인증되지 않았습니다.");
+                    // }
+                  }),
             ],
           ),
         ),
       ),
     );
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Container(
-            margin: EdgeInsets.only(top: 50),
-            color: Colors.black,
-            child: Stack(
-              children: stackChildren,
-            )),
+    return WillPopScope(
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Container(
+              margin: EdgeInsets.only(top: 50),
+              color: Colors.black,
+              child: Stack(
+                children: stackChildren,
+              )),
+        ),
       ),
+      onWillPop: () {
+        controller.pausePreview();
+        FlutterDialog(context,"인증을 취소합니다.");
+      },
     );
   }
 }

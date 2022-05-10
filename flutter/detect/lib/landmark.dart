@@ -12,7 +12,7 @@ List<Map> landmark = [
 var nameList = ['북문', '정문', '상면', '일청담', '3층 석탑'];
 
 var imageList = [
-  'image/north.png',
+  'image/north.PNG',
   'image/front.PNG',
   'image/fackpark.jpg',
   'image/onebluedam.png',

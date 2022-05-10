@@ -79,7 +79,7 @@ class _CameraState extends State<Camera> {
 
     print("target is -1");
     target = -1; // -1 써야함
-    Fluttertoast.showToast(msg: "근처에 타깃이 없습니다.");
+    Fluttertoast.showToast(msg: "근처에 타깃이 없습니다. \n위치를 다시 확인하세요.");
   }
 
   //모델 불러오기
@@ -152,14 +152,13 @@ class _CameraState extends State<Camera> {
     _recognitions.forEach((re) {
       print(re["detectedClass"]);
       print(re["confidenceInClass"]);
-      print("Boxes_target is " +
-          target.toString() +
-          landmark[target]['name'].toString());
+      
 
       //모델 우리껄로 바꾸면 조건문 이거로 바꿔야함
       //if (re['confidenceInClass'] >= (0.3))
       //인증 성공했을때
-      if (re["detectedClass"] == landmark[target]['name'] &&
+      if(target != -1) {
+        if (re["detectedClass"] == landmark[target]['name'] &&
           re['confidenceInClass'] >= (0.3)) {
         Fluttertoast.showToast(msg: "인증되었습니다");
         changeDescription(target);
@@ -167,9 +166,9 @@ class _CameraState extends State<Camera> {
           certification = true;
         });
       }
+      }
       //인증은 성공햇지만 gps는 아닐때
       else if (re['confidenceInClass'] >= (0.3)) {
-        Fluttertoast.showToast(msg: "올바른 위치가 아닙니다.");
         getCurrentLocation();
       }
     });

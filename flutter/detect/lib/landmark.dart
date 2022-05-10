@@ -8,6 +8,10 @@ List<Map> landmark = [
 
 var nameList = ['북문', '정문'];
 
-var imageList = ['image/north/1.PNG', 'image/front/1.PNG'];
+var imageList = ['image/north.PNG', 'image/front.PNG'];
 
-var description = ['북문입니다', '정문입니다'];
+var description = ['인증 미완료', '인증 미완료'];
+
+void changeDescription(int index) {
+  description[index] = '인증 완료';
+}

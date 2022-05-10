@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meta/meta_meta.dart';
 import 'package:tflite/tflite.dart';
 import 'package:camera/camera.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
+import 'dart:math' as math;
 
 import 'landmark.dart';
 import 'main.dart';
@@ -14,10 +19,8 @@ class Camera extends StatefulWidget {
 }
 
 class _CameraState extends State<Camera> {
-  double mylatitude; //위도
-  double mylongitude; //경도
-  List _recognitions; //탐지한 객체들 정보를 담은 리스트
-  Map target; //사용자 위치에서 탐지해야하는 타겟 랜드마크
+  List _recognitions; //탐지한 객체들 정보를 담은 리스트\
+  var target;
   double _imageHeight;
   double _imageWidth;
   CameraImage img;
@@ -27,18 +30,54 @@ class _CameraState extends State<Camera> {
   @override
   void initState() {
     super.initState();
-    initGps();
+    getCurrentLocation();
+    print("loadmodel~~" + target.toString());
     loadModel();
     initCamera();
   }
 
-  //gps 값 받아오기 구현해야함
-  void initGps() {
-    //위도 경도 얻어와서 타겟 정해주기
-    //mylatitude = ###;
-    //mylongitude = ###;
-    //if 위도 경도가 머시기머시기면
-    target = landmark[0]; //임시로 북문 타겟 해놓은거임
+  // gps 값을 이용해 landmark list를 순차탐색, 거리 100m 이내의 landmark를 찾으면 해당 index를 return
+  Future<void> getCurrentLocation() async {
+    LocationPermission permission = await Geolocator.requestPermission();
+    var currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print("latitude" +
+        currentPosition.latitude.toString() +
+        "longitude" +
+        currentPosition.longitude.toString());
+    var lat1 = currentPosition.latitude * math.pi / 180;
+    //35.885790 * math.pi / 180;
+    var lon1 = currentPosition.longitude * math.pi / 180;
+    //128.614078 * math.pi / 180;
+    double lat2, lon2, dist;
+
+    for (int i = 0; i < landmark.length; i++) {
+      print("compare in for loop" + i.toString());
+      print("landmark" +
+          i.toString() +
+          " lati : " +
+          landmark[i]['latitude'].toString() +
+          " long : " +
+          landmark[i]['longitude'].toString());
+      lat2 = landmark[i]['latitude'] * math.pi / 180;
+      lon2 = landmark[i]['longitude'] * math.pi / 180;
+      dist = math.sin(lat1) * math.sin(lat2) +
+          math.cos(lat1) * math.cos(lat2) * math.cos(lon1 - lon2);
+      dist = math.acos(dist);
+      dist = dist * 180 / math.pi;
+      dist = dist * 60 * 1.1515;
+      dist *= 1609.344;
+      print("distance : " + dist.toString());
+      // 반경 100m
+      if (dist < 100) {
+        print("target is landmark " + i.toString());
+        target = i;
+      }
+    }
+
+    print("target is -1");
+    target = -1; // -1 써야함
+    Fluttertoast.showToast(msg: "근처에 타깃이 없습니다.");
   }
 
   //모델 불러오기
@@ -107,15 +146,18 @@ class _CameraState extends State<Camera> {
   List<Widget> renderBoxes(Size screen) {
     if (_recognitions == null) return [];
     if (_imageHeight == null || _imageWidth == null) return [];
-
     //여기에 탐지됐을때 인증보내는 기능 만들어 넣음 됨
     _recognitions.forEach((re) {
       print(re["detectedClass"]);
       print(re["confidenceInClass"]);
+      print("Boxes_target is " +
+          target.toString() +
+          landmark[target]['name'].toString());
 
       //모델 우리껄로 바꾸면 조건문 이거로 바꿔야함
-      //if (re["detectedClass"] == target['name'] && re['confidenceInClass'] >= (0.3))
-      if (re['confidenceInClass'] >= (0.3)) {
+      //if (re['confidenceInClass'] >= (0.3))
+      if (re["detectedClass"] == landmark[target]['name'] &&
+          re['confidenceInClass'] >= (0.3)) {
         Fluttertoast.showToast(msg: "인증되었습니다");
       }
     });

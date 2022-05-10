@@ -8,7 +8,7 @@ import 'package:camera/camera.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:math' as math;
-
+import 'util.dart';
 import 'landmark.dart';
 import 'main.dart';
 
@@ -20,12 +20,13 @@ class Camera extends StatefulWidget {
 
 class _CameraState extends State<Camera> {
   List _recognitions; //탐지한 객체들 정보를 담은 리스트\
-  var target;
+  var target = 0;
   double _imageHeight;
   double _imageWidth;
   CameraImage img;
   CameraController controller;
   bool isBusy = false;
+  bool certification = false; //인증 여부
 
   @override
   void initState() {
@@ -72,6 +73,7 @@ class _CameraState extends State<Camera> {
       if (dist < 100) {
         print("target is landmark " + i.toString());
         target = i;
+        return;
       }
     }
 
@@ -156,9 +158,19 @@ class _CameraState extends State<Camera> {
 
       //모델 우리껄로 바꾸면 조건문 이거로 바꿔야함
       //if (re['confidenceInClass'] >= (0.3))
+      //인증 성공했을때
       if (re["detectedClass"] == landmark[target]['name'] &&
           re['confidenceInClass'] >= (0.3)) {
         Fluttertoast.showToast(msg: "인증되었습니다");
+        changeDescription(target);
+        setState(() {
+          certification = true;
+        });
+      }
+      //인증은 성공햇지만 gps는 아닐때
+      else if (re['confidenceInClass'] >= (0.3)) {
+        Fluttertoast.showToast(msg: "올바른 위치가 아닙니다.");
+        getCurrentLocation();
       }
     });
 
@@ -226,23 +238,46 @@ class _CameraState extends State<Camera> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text('YOLO'),
+              TextButton(
+                  style: TextButton.styleFrom(
+                      primary:
+                          (certification == true ? Colors.black : Colors.white),
+                      textStyle: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      )),
+                  child: Text("인증완료"),
+                  onPressed: () {
+                    if (certification == true) {
+                      controller.pausePreview();
+                      FlutterDialog(context, "인증되었습니다.");
+                    }
+                    // else{
+                    //   Fluttertoast.showToast(msg: "아직 인증되지 않았습니다.");
+                    // }
+                  }),
             ],
           ),
         ),
       ),
     );
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Container(
-            margin: EdgeInsets.only(top: 50),
-            color: Colors.black,
-            child: Stack(
-              children: stackChildren,
-            )),
+    return WillPopScope(
+      child: SafeArea(
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Container(
+              margin: EdgeInsets.only(top: 50),
+              color: Colors.black,
+              child: Stack(
+                children: stackChildren,
+              )),
+        ),
       ),
+      onWillPop: () {
+        controller.pausePreview();
+        FlutterDialog(context, "인증을 취소합니다.");
+      },
     );
   }
 }

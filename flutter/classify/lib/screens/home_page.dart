@@ -25,7 +25,7 @@ class _MyHomePageState extends State<MyHomePage> {
   loadTfliteModel() async {
     String res;
     res = await Tflite.loadModel(
-        model: "assets/dol.tflite", labels: "assets/dol.txt");
+        model: "assets/near.tflite", labels: "assets/near.txt");
     print("res : " + res);
   }
 

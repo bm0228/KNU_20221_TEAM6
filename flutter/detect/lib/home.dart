@@ -15,7 +15,7 @@ class home extends StatelessWidget {
           Icon(Icons.warning, size: 50.0),
           SizedBox(height: 30.0),
           Text(
-              '<인증 유의사항>\n\n\n타겟 전체 모습이 카메라 화면에 나오도록 정면에서 비춰주세요.\n인증이 완료되면 인증완료 버튼을 눌러주세요.\n보행 중에는 주변을 계속 살피세요.\n체크리스트를 통해 타겟 정보를 확인할 수 있습니다',
+              '<인증 유의사항>\n\n\n타겟 전체 모습이 카메라 화면에 나오도록\n정면에서 비춰주세요.\n\n인증이 완료되면 인증완료 버튼을 눌러주세요.\n\n보행 중에는 주변을 계속 살피세요.\n\n체크리스트를 통해 타겟 정보를 확인할 수 있습니다',
               style: TextStyle(color: Colors.black, fontSize: 15.0),
               textAlign: TextAlign.center),
           SizedBox(height: 100.0),

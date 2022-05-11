@@ -72,14 +72,14 @@ class _CameraState extends State<Camera> {
       // 반경 100m
       if (dist < 100) {
         target = i;
-        Fluttertoast.showToast(msg: landmark[target]['name']+"을 찾으세요");
+        Fluttertoast.showToast(msg: landmark[target]['name']+" 찾기");
         return;
       }
     }
 
     print("target is -1");
     target = -1; // -1 써야함
-    Fluttertoast.showToast(msg: "근처에 타깃이 없습니다. \n위치를 다시 확인하세요.");
+    Fluttertoast.showToast(msg: "근처에 타깃이 없습니다. \n위치정보를 다시 확인합니다.");
   }
 
   //모델 불러오기

@@ -71,8 +71,8 @@ class _CameraState extends State<Camera> {
       print("distance : " + dist.toString());
       // 반경 100m
       if (dist < 100) {
-        print("target is landmark " + i.toString());
         target = i;
+        Fluttertoast.showToast(msg: landmark[target]['name']+"을 찾으세요");
         return;
       }
     }

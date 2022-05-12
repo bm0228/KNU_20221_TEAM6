@@ -72,7 +72,7 @@ class _CameraState extends State<Camera> {
       // 반경 100m
       if (dist < 100) {
         target = i;
-        Fluttertoast.showToast(msg: landmark[target]['name']+" 찾기");
+        Fluttertoast.showToast(msg: nameList[target]+" 찾기");
         return;
       }
     }

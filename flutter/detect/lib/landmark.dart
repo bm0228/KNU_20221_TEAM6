@@ -2,7 +2,7 @@
 //latitude 위도
 //longitude 경도
 List<Map> landmark = [
-  {'name': 'north', 'latitude': 35.8919, 'longitude': 128.609952},
+  {'name': 'north', 'latitude': 35.8919, 'longitude': 128.610129},
   {'name': 'front', 'latitude': 35.88517, 'longitude': 128.61447},
   {'name': 'facepark', 'latitude': 0, 'longitude': 0},
   {'name': 'onebluedam', 'latitude': 0, 'longitude': 0},

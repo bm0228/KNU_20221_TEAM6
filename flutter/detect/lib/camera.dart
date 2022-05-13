@@ -19,8 +19,8 @@ class Camera extends StatefulWidget {
 }
 
 class _CameraState extends State<Camera> {
-  List _recognitions; //탐지한 객체들 정보를 담은 리스트\
-  var target = 0;
+  List _recognitions; //탐지한 객체들 정보를 담은 리스트
+  var target = 0; //현재 위치 gps정보를 이용해 어떤 랜드마크를 타깃으로 할지에 사용하는 변수
   double _imageHeight;
   double _imageWidth;
   CameraImage img;
@@ -72,13 +72,13 @@ class _CameraState extends State<Camera> {
       // 반경 100m
       if (dist < 100) {
         target = i;
-        Fluttertoast.showToast(msg: nameList[target]+" 찾기");
+        Fluttertoast.showToast(msg: nameList[target] + " 찾기");
         return;
       }
     }
 
     print("target is -1");
-    target = -1; // -1 써야함
+    target = -1; // 반경 100m안에 타깃이 없을경우
     Fluttertoast.showToast(msg: "근처에 타깃이 없습니다. \n위치정보를 다시 확인합니다.");
   }
 
@@ -148,26 +148,24 @@ class _CameraState extends State<Camera> {
   List<Widget> renderBoxes(Size screen) {
     if (_recognitions == null) return [];
     if (_imageHeight == null || _imageWidth == null) return [];
-    //여기에 탐지됐을때 인증보내는 기능 만들어 넣음 됨
     _recognitions.forEach((re) {
       print(re["detectedClass"]);
       print(re["confidenceInClass"]);
-      
 
       //모델 우리껄로 바꾸면 조건문 이거로 바꿔야함
       //if (re['confidenceInClass'] >= (0.3))
       //인증 성공했을때
-      if(target != -1) {
+      if (target != -1) {
         if (re["detectedClass"] == landmark[target]['name'] &&
-          re['confidenceInClass'] >= (0.3)) {
-        Fluttertoast.showToast(msg: "인증되었습니다");
-        changeDescription(target);
-        setState(() {
-          certification = true;
-        });
+            re['confidenceInClass'] >= (0.3)) {
+          Fluttertoast.showToast(msg: "인증되었습니다");
+          changeDescription(target);
+          setState(() {
+            certification = true;
+          });
+        }
       }
-      }
-      //인증은 성공햇지만 gps는 아닐때
+      //인증은 성공했지만 gps정보가 일치하지 않을때
       else if (re['confidenceInClass'] >= (0.3)) {
         getCurrentLocation();
       }

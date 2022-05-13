@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+//카메라, 마이크 권한 요청하는 함수 (카메라앱이 영상이라 마이크 권한 필요한듯함)
 Future<String> callPermissions() async {
   Map<Permission, PermissionStatus> statuses = await [
     Permission.camera,

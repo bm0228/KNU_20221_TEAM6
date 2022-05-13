@@ -10,6 +10,7 @@ class Checklist extends StatefulWidget {
 }
 
 class _ChecklistState extends State<Checklist> {
+  //랜드마크 리스트 눌렀을때 팝업띄우는 함수
   void showPopup(context, title, image, decription) {
     showDialog(
       context: context,
@@ -74,10 +75,12 @@ class _ChecklistState extends State<Checklist> {
               title: Text("체크리스트"),
               backgroundColor: Colors.red[700],
             ),
+            //리스트뷰 사용하여 체크리스트 구현
             body: ListView.builder(
                 itemCount: landmark.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
+                    //랜드마크 리스트 누르면 팝업 띄워줌
                     onTap: () {
                       showPopup(context, nameList[index], imageList[index],
                           description[index]);

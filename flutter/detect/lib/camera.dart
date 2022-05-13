@@ -37,7 +37,7 @@ class _CameraState extends State<Camera> {
     initCamera();
   }
 
-  // gps 값을 이용해 landmark list를 순차탐색, 거리 100m 이내의 landmark를 찾으면 해당 index를 return
+  // landmark list를 index 순서대로 순차탐색, gps 값을 이용해 거리를 계산해서 거리 100m 이내의 landmark를 찾으면 타깃값을 해당 index값으로 하고 함수종료
   Future<void> getCurrentLocation() async {
     LocationPermission permission = await Geolocator.requestPermission();
     var currentPosition = await Geolocator.getCurrentPosition(
@@ -46,6 +46,8 @@ class _CameraState extends State<Camera> {
         currentPosition.latitude.toString() +
         "longitude" +
         currentPosition.longitude.toString());
+
+    // lat1, lon1, lat2, log2, dist -> 받아온 gps좌표로 실제거리(dist) 계산하는데 사용
     var lat1 = currentPosition.latitude * math.pi / 180;
     //35.885790 * math.pi / 180;
     var lon1 = currentPosition.longitude * math.pi / 180;
@@ -69,7 +71,7 @@ class _CameraState extends State<Camera> {
       dist = dist * 60 * 1.1515;
       dist *= 1609.344;
       print("distance : " + dist.toString());
-      // 반경 100m
+      //반경 100m
       if (dist < 100) {
         target = i;
         Fluttertoast.showToast(msg: nameList[target] + " 찾기");
@@ -152,8 +154,6 @@ class _CameraState extends State<Camera> {
       print(re["detectedClass"]);
       print(re["confidenceInClass"]);
 
-      //모델 우리껄로 바꾸면 조건문 이거로 바꿔야함
-      //if (re['confidenceInClass'] >= (0.3))
       //인증 성공했을때
       if (target != -1) {
         if (re["detectedClass"] == landmark[target]['name'] &&

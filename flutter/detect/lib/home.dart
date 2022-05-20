@@ -25,7 +25,7 @@ class _homeState extends State<home> {
             '<인증 유의사항>\n\n\n타겟 전체 모습이 카메라 화면에 나오도록\n카메라를 세로로 들고 정면에서 비춰주세요.\n\n인증이 완료되면 인증완료 버튼을 눌러주세요.\n\n보행 중에는 주변을 계속 살피세요.\n\n체크리스트를 통해 타겟 정보를 확인할 수 있습니다',
             style: TextStyle(color: Colors.black, fontSize: 15.0),
             textAlign: TextAlign.center),
-        SizedBox(height: 100.0),
+        SizedBox(height: 50.0),
         ElevatedButton(
             onPressed: () {
               //인증하기(카메라 화면)으로 전환
@@ -49,9 +49,11 @@ class _homeState extends State<home> {
             style: ElevatedButton.styleFrom(primary: Colors.red))
       ])),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.grey,
-        selectedItemColor: Colors.blue,
+        backgroundColor: Colors.white,
+        selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
         onTap: (int index) {
           switch (index) {
             case 0:
@@ -81,11 +83,11 @@ class _homeState extends State<home> {
           }
         },
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'a'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'b'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'c'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'd'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'e')
+          BottomNavigationBarItem(icon: Icon(Icons.star), label: '인사말'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: '코스안내'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: '투어인증'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: '인증샷'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: '공지사항')
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:object_detection_tiny_yolov2/webviews.dart';
 import 'home.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: '인증',
       theme: ThemeData(brightness: Brightness.light, primaryColor: Colors.blue),
-      home: home(),
+      home: WebViews(),
     );
   }
 }

@@ -2,22 +2,24 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'camera.dart';
 import 'landmark.dart';
 import 'checklist.dart';
+import 'home.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 var linkList = [
-  "https://dgsw-tour.flash21.com/rule_mba?main_YN=N",
-  "https://dgsw-tour.flash21.com/chart_mba_list?place=stadium",
+  "https://knu-new-tour.flash21.com/greet",
+  "https://knu-new-tour.flash21.com/course",
   "",
-  "https://dgsw-tour.flash21.com/free_brd_write",
-  "https://dgsw-tour.flash21.com/free_board_list"
+  "",
+  "https://knu-new-tour.flash21.com/board/list",
+  "https://knu-new-tour.flash21.com"
 ];
 
-int linkindex = 0;
+int linkindex = 5;
 
-//인증여부 업데이트 함수
 void changelinkList(int index) {
   linkindex = index;
 }
@@ -41,19 +43,74 @@ class WebViewsState extends State<WebViews> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () => _goBack(context),
-        child: Scaffold(
-          body: WebView(
-            onWebViewCreated: (WebViewController webViewController) {
-              _completerController.future
-                  .then((value) => _webViewController = value);
-              _completerController.complete(webViewController);
-            },
-            initialUrl: linkList[linkindex],
-            javascriptMode: JavascriptMode.unrestricted,
-          ),
-        ));
+    return SafeArea(
+        child: WillPopScope(
+            onWillPop: () => _goBack(context),
+            child: Scaffold(
+              body: WebView(
+                onWebViewCreated: (WebViewController webViewController) {
+                  _completerController.future
+                      .then((value) => _webViewController = value);
+                  _completerController.complete(webViewController);
+                },
+                initialUrl: linkList[linkindex],
+                javascriptMode: JavascriptMode.unrestricted,
+              ),
+              bottomNavigationBar: BottomNavigationBar(
+                backgroundColor: Colors.white,
+                selectedItemColor: Colors.black,
+                unselectedItemColor: Colors.black,
+                showUnselectedLabels: true,
+                type: BottomNavigationBarType.fixed,
+                onTap: (int index) {
+                  switch (index) {
+                    case 0:
+                      changelinkList(index);
+                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => WebViews()));
+                      break;
+                    case 1:
+                      changelinkList(index);
+                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => WebViews()));
+                      break;
+                    case 2:
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => home()),
+                      );
+                      break;
+                    case 3:
+                      changelinkList(index);
+                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Checklist()));
+                      break;
+                    case 4:
+                      changelinkList(index);
+                      Navigator.pop(context);
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => WebViews()));
+                      break;
+                    default:
+                  }
+                },
+                items: [
+                  BottomNavigationBarItem(icon: Icon(Icons.star), label: '인사말'),
+                  BottomNavigationBarItem(icon: Icon(Icons.map), label: '코스안내'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.camera_alt), label: '투어인증'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.checklist), label: '체크리스트'),
+                  BottomNavigationBarItem(
+                      icon: Icon(Icons.circle_notifications_outlined),
+                      label: '공지사항')
+                ],
+              ),
+            )));
   }
 
   Future<bool> _goBack(BuildContext context) async {

@@ -13,8 +13,8 @@ class home extends StatefulWidget {
 class _homeState extends State<home> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // 상단 앱 이름
+    return SafeArea(
+        child: Scaffold(
       appBar: AppBar(title: (Text("크누투어")), backgroundColor: Colors.red[700]),
       body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -35,17 +35,6 @@ class _homeState extends State<home> {
               );
             },
             child: Text('인증하기', style: TextStyle(fontSize: 20.0)),
-            style: ElevatedButton.styleFrom(primary: Colors.red)),
-        SizedBox(height: 20.0),
-        ElevatedButton(
-            onPressed: () {
-              //체크리스트 화면으로 전환
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => Checklist()),
-              );
-            },
-            child: Text('체크리스트', style: TextStyle(fontSize: 20.0)),
             style: ElevatedButton.styleFrom(primary: Colors.red))
       ])),
       bottomNavigationBar: BottomNavigationBar(
@@ -58,24 +47,32 @@ class _homeState extends State<home> {
           switch (index) {
             case 0:
               changelinkList(index);
+              Navigator.pop(context);
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => WebViews()));
               break;
             case 1:
               changelinkList(index);
+              Navigator.pop(context);
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => WebViews()));
               break;
             case 2:
-              home();
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => home()),
+              );
               break;
             case 3:
               changelinkList(index);
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => WebViews()));
+              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Checklist()));
               break;
             case 4:
               changelinkList(index);
+              Navigator.pop(context);
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => WebViews()));
               break;
@@ -84,12 +81,13 @@ class _homeState extends State<home> {
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.star), label: '인사말'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: '코스안내'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: '투어인증'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: '인증샷'),
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: '공지사항')
+          BottomNavigationBarItem(icon: Icon(Icons.map), label: '코스안내'),
+          BottomNavigationBarItem(icon: Icon(Icons.camera_alt), label: '투어인증'),
+          BottomNavigationBarItem(icon: Icon(Icons.checklist), label: '체크리스트'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.circle_notifications_outlined), label: '공지사항')
         ],
       ),
-    );
+    ));
   }
 }

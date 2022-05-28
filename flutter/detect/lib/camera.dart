@@ -129,7 +129,7 @@ class _CameraState extends State<Camera> {
       imageMean: 127.5, //127.5  // 0
       imageStd: 127.5, //127.5  //255.0
       numResultsPerClass: 1,
-      threshold: 0.4,
+      threshold: 0.6, //컨피던스0.6 이상부터 탐지
     );
     print(_recognitions.length);
     isBusy = false;
@@ -156,8 +156,7 @@ class _CameraState extends State<Camera> {
 
       //인증 성공했을때
       if (target != -1) {
-        if (re["detectedClass"] == landmark[target]['name'] &&
-            re['confidenceInClass'] >= (0.3)) {
+        if (re["detectedClass"] == landmark[target]['name']) {
           Fluttertoast.showToast(msg: "인증되었습니다");
           changeDescription(target);
           setState(() {
@@ -166,7 +165,7 @@ class _CameraState extends State<Camera> {
         }
       }
       //인증은 성공했지만 gps정보가 일치하지 않을때
-      else if (re['confidenceInClass'] >= (0.3)) {
+      else {
         getCurrentLocation();
       }
     });

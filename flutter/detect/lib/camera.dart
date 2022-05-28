@@ -89,7 +89,7 @@ class _CameraState extends State<Camera> {
     Tflite.close();
     try {
       String res = await Tflite.loadModel(
-        model: "assets/converted_model.tflite",
+        model: "assets/converted_model_1_4000.tflite",
         labels: "assets/converted_model.txt",
         // useGpuDelegate: true,
       );
@@ -129,7 +129,7 @@ class _CameraState extends State<Camera> {
       imageMean: 127.5, //127.5  // 0
       imageStd: 127.5, //127.5  //255.0
       numResultsPerClass: 1,
-      threshold: 0.6, //컨피던스0.6 이상부터 탐지
+      threshold: 0.3, //컨피던스0.3 이상부터 탐지
     );
     print(_recognitions.length);
     isBusy = false;
